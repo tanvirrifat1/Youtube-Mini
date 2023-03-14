@@ -6,9 +6,7 @@ import VideoGridItem from "./VideoGridItem";
 
 export default function VideGrid() {
     const dispatch = useDispatch();
-    const { videos, isLoading, isError, error } = useSelector(
-        (state) => state.videos
-    );
+    const { videos, isLoading, isError, error } = useSelector((state) => state.videos);
 
     useEffect(() => {
         dispatch(fetchVideos());
