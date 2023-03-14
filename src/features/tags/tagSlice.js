@@ -3,10 +3,10 @@ import { getTags } from "./tagAPI";
 const { createSlice, createAsyncThunk } = require("@reduxjs/toolkit");
 
 const initialState = {
+    tags: [],
     isLoading: false,
     isError: false,
     error: '',
-    tags: []
 }
 
 export const fetchTags = createAsyncThunk("tags/fetchTags", async () => {
