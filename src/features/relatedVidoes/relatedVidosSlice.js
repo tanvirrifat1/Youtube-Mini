@@ -1,39 +1,38 @@
-import { getVideo } from "./videoAPI"
-
-const { createSlice, createAsyncThunk } = require("@reduxjs/toolkit")
+const { createSlice, createAsyncThunk } = require("@reduxjs/toolkit");
+const { getRelatedVideos } = require("./relatedVidosAPI");
 
 const initialState = {
-    video: {},
+    relatedVideos: [],
     isLoading: false,
     isError: false,
     error: ''
 }
 
-export const fetchVideo = createAsyncThunk("video/fetchVideo", async (id) => {
-    const video = await getVideo(id);
-    return video;
-});
+export const fetchRelatedVideos = createAsyncThunk("relatedVideos/fetchRelatedVideos",
+    async (id, tags) => {
+        const relatedVideos = await getRelatedVideos(id, tags)
+        return relatedVideos;
+    })
 
-const videoSlice = createSlice({
-    name: "video",
+const relatedVideosSlice = createSlice({
+    name: 'relatedVideos',
     initialState,
     extraReducers: (builder) => {
-        builder
-            .addCase(fetchVideo.pending, (state) => {
-                state.isError = false;
-                state.isLoading = true;
+        builder.addCase(fetchRelatedVideos.pending, (state, action) => {
+            state.isError = false
+            state.isLoading = false
+        })
+            .addCase(fetchRelatedVideos.fulfilled, (state, action) => {
+                state.isLoading = false
+                state.relatedVideos = action.payload
             })
-            .addCase(fetchVideo.fulfilled, (state, action) => {
-                state.isLoading = false;
-                state.video = action.payload;
+            .addCase(fetchRelatedVideos.rejected, (state, action) => {
+                state.isLoading = false
+                state.relatedVideos = []
+                state.isError = true
+                state.error = action.error?.message
             })
-            .addCase(fetchVideo.rejected, (state, action) => {
-                state.isLoading = false;
-                state.video = {};
-                state.isError = true;
-                state.error = action.error?.message;
-            });
-    },
-});
+    }
+})
 
-export default videoSlice.reducer;
+export default relatedVideosSlice.reducer
